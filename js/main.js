@@ -60,6 +60,8 @@ const FEATURES = [
   'conditioner',
 ];
 
+const COUNT_OFFERS = 10;
+
 const getRandomArrayElement = (elements) => elements[getRandomInteger(0, elements.length - 1)];
 
 const createLoc = () => ({
@@ -101,3 +103,5 @@ const createOffer = () => {
 };
 
 createOffer();
+const location = 1;
+console.log(location);
