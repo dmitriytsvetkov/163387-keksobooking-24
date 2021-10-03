@@ -18,9 +18,6 @@ const getRandomFloat = (minValue, maxValue, precision) => {
   return parseFloat(Math.min(minValue + (Math.random() * (maxValue - minValue)),maxValue).toFixed(precision));
 };
 
-getRandomInteger(0, 5);
-getRandomFloat(0, 1, 2);
-
 const AVATARS = [
   'img/avatars/user01.png',
   'img/avatars/user02.png',
@@ -63,11 +60,7 @@ const FEATURES = [
   'conditioner',
 ];
 
-const getRandomArrayElement = (elements) => {
-  return elements[getRandomInteger(0, elements.length - 1)];
-};
-
-
+const getRandomArrayElement = (elements) => elements[getRandomInteger(0, elements.length - 1)];
 
 const createLoc = () => ({
   lat: getRandomFloat(35.65000, 35.70000, 5),
@@ -76,7 +69,7 @@ const createLoc = () => ({
 
 const getRandomArray = ([...source], maxLength) => Array.from(
   { length: Math.min(source.length, 1 + Math.random() * maxLength | 0) },
-  () => source.splice(Math.random() * source.length | 0, 1)[0]
+  () => source.splice(Math.random() * source.length | 0, 1)[0],
 );
 
 const res = [];
