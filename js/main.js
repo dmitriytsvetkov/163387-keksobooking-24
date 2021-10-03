@@ -60,11 +60,31 @@ const FEATURES = [
   'conditioner',
 ];
 
-const COUNT_OFFERS = 10;
+const TITLES = [
+  'название1',
+  'название2',
+  'название3',
+  'название4',
+  'название5',
+  'название6',
+  'название7',
+];
+
+const DESCRIPTIONS = [
+  'описание1',
+  'описание2',
+  'описание3',
+  'описание4',
+  'описание5',
+  'описание6',
+  'описание7',
+];
+
+const OFFERS_COUNT = 10;
 
 const getRandomArrayElement = (elements) => elements[getRandomInteger(0, elements.length - 1)];
 
-const createLoc = () => ({
+const createLocation = () => ({
   lat: getRandomFloat(35.65000, 35.70000, 5),
   lng: getRandomFloat(139.70000, 139.80000, 5),
 });
@@ -74,34 +94,38 @@ const getRandomArray = ([...source], maxLength) => Array.from(
   () => source.splice(Math.random() * source.length | 0, 1)[0],
 );
 
-const res = [];
-
 const createOffer = () => {
-  AVATARS.forEach((element) => {
-    const loc = createLoc();
-    const result = {
-      author: {
-        avatar: element,
-      },
-      offer: {
-        title: 'test',
-        address: `${loc.lat}, ${loc.lng}`,
-        price: getRandomInteger(1, 100),
-        type: getRandomArrayElement(OFFER_TYPES),
-        rooms: getRandomInteger(1, 5),
-        guests: getRandomInteger(1, 4),
-        checkin: getRandomArrayElement(TIMES),
-        checkout: getRandomArrayElement(TIMES),
-        features : getRandomArray(FEATURES, FEATURES.length),
-        description: 'test',
-        photos: getRandomArray(PHOTOS, PHOTOS.length),
-      },
-      location: loc,
-    };
-    res.push(result);
-  });
+  const location = createLocation();
+  return {
+    author: {
+      avatar: getRandomArrayElement(AVATARS),
+    },
+    offer: {
+      title: getRandomArrayElement(TITLES),
+      address: `${location.lat}, ${location.lng}`,
+      price: getRandomInteger(1, 100),
+      type: getRandomArrayElement(OFFER_TYPES),
+      rooms: getRandomInteger(1, 5),
+      guests: getRandomInteger(1, 4),
+      checkin: getRandomArrayElement(TIMES),
+      checkout: getRandomArrayElement(TIMES),
+      features : getRandomArray(FEATURES, FEATURES.length),
+      description: getRandomArrayElement(DESCRIPTIONS),
+      photos: getRandomArray(PHOTOS, PHOTOS.length),
+    },
+    location: location,
+  };
 };
 
-createOffer();
-const location = 1;
-console.log(location);
+const createOffers = () => {
+  const result = [];
+  // eslint-disable-next-line id-length
+  for(let i = 0; i < OFFERS_COUNT; i++) {
+    result.push(createOffer());
+  }
+  return result;
+};
+
+const offers = createOffers();
+// eslint-disable-next-line no-console
+console.log(offers);
