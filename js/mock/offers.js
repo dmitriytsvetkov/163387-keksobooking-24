@@ -1,4 +1,4 @@
-import {getRandomArray, getRandomArrayElement, getRandomFloat, getRandomInteger} from './util.js';
+import {getRandomArray, getRandomArrayElement, getRandomFloat, getRandomInteger} from '../utils.js';
 
 const AVATARS = [
   'img/avatars/user01.png',
@@ -90,4 +90,15 @@ const createOffer = () => {
   };
 };
 
-export {createOffer};
+const OFFERS_COUNT = 10;
+
+const createOffers = () => {
+  const result = [];
+  // eslint-disable-next-line id-length
+  for(let i = 0; i < OFFERS_COUNT; i++) {
+    result.push(createOffer());
+  }
+  return result;
+};
+
+export {createOffers};
