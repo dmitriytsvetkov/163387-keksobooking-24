@@ -8,7 +8,7 @@ const cardTemplate = document.querySelector('#card').content.querySelector('.pop
 const cardElement = cardTemplate.cloneNode(true);
 
 const cardTitle = cardElement.querySelector('.popup__title');
-const cardTextAdress = cardElement.querySelector('.popup__text--address');
+const cardTextAddress = cardElement.querySelector('.popup__text--address');
 const cardTextPrice = cardElement.querySelector('.popup__text--price');
 const cardType = cardElement.querySelector('.popup__type');
 const cardTextCapacity = cardElement.querySelector('.popup__text--capacity');
@@ -23,7 +23,7 @@ mapCanvas.appendChild(cardElement);
 console.log(firstOffer);
 
 firstOffer.offer.title ? cardTitle.textContent = firstOffer.offer.title : cardTitle.classList.add('hidden');
-firstOffer.offer.address ? cardTextAdress.textContent = firstOffer.offer.address : cardTextAdress.classList.add('hidden');
+firstOffer.offer.address ? cardTextAddress.textContent = firstOffer.offer.address : cardTextAddress.classList.add('hidden');
 firstOffer.offer.price ? cardTextPrice.textContent = `${firstOffer.offer.price} ₽/ночь` : cardTextPrice.classList.add('hidden');
 firstOffer.offer.type ? cardType.textContent = firstOffer.offer.type : cardType.classList.add('hidden');
 firstOffer.offer.rooms && firstOffer.offer.guests ? cardTextCapacity.textContent = `${firstOffer.offer.rooms} комнаты для ${firstOffer.offer.guests} гостей` : cardTextCapacity.classList.add('hidden');
