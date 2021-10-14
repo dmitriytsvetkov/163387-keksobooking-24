@@ -1,4 +1,8 @@
-import {cardElement} from './popup.js';
+import {createPopup} from './popup.js';
+import {createOffers} from './mock/offers.js';
 
 const mapCanvas = document.querySelector('#map-canvas');
-mapCanvas.appendChild(cardElement);
+
+const offers = createOffers();
+const popupElement = createPopup(offers[0]);
+mapCanvas.appendChild(popupElement);
