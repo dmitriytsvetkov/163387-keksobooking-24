@@ -62,6 +62,8 @@ const DESCRIPTIONS = [
   'Курортный отель Sunrise Blue Magic расположен в Обзоре. К услугам гостей сезонный открытый бассейн, фитнес-центр, принадлежности для барбекю, круглосуточная стойка регистрации, ресторан и детская игровая площадка. Гости могут пользоваться бесплатным Wi-Fi и камерой хранения багажа.',
 ];
 
+const OFFERS_COUNT = 10;
+
 const createLocation = () => ({
   lat: getRandomFloat(35.65000, 35.70000, 5),
   lng: getRandomFloat(139.70000, 139.80000, 5),
@@ -89,8 +91,6 @@ const createOffer = () => {
     location: location,
   };
 };
-
-const OFFERS_COUNT = 10;
 
 const createOffers = () => {
   const result = [];
