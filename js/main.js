@@ -1,5 +1,8 @@
+import {createPopup} from './popup.js';
 import {createOffers} from './mock/offers.js';
 
+const mapCanvas = document.querySelector('#map-canvas');
+
 const offers = createOffers();
-// eslint-disable-next-line no-console
-console.log(offers);
+const popupElement = createPopup(offers[0]);
+mapCanvas.appendChild(popupElement);
