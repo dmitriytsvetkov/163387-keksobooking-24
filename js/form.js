@@ -4,7 +4,7 @@ const formCapacitySelect = form.querySelector('#capacity');
 const formCapacityOptions = Array.from(formCapacitySelect.options);
 const disabledFormClass = 'ad-form--disabled';
 
-const conditions = {
+const roomsCapacityConditions = {
   1 : [
     '1',
   ],
@@ -50,26 +50,26 @@ const enableForms = () => {
   enableInteractiveElements('.map__filters', 'fieldset, fieldset>input, select');
 };
 
-const disablePlacesForRooms = (rooms) => {
-  const result = conditions[rooms];
+const disablePlacesForRooms = (roomAmount) => {
+  const result = roomsCapacityConditions[roomAmount];
   formCapacityOptions.forEach((element) => {
     element.disabled = !result.includes(element.value);
   });
 };
 
 const selectInitialOption = (rooms) => {
-  const result = conditions[rooms];
+  const result = roomsCapacityConditions[rooms];
   if (!result.includes(formCapacitySelect.value)) {
     formCapacitySelect.value = result[0];
   }
 };
 
-formRoomNumberSelect.addEventListener('change', (evt) => {
-  disablePlacesForRooms(evt.target.value);
-  selectInitialOption(evt.target.value);
-});
+const setValidationForm = () => {
+  formRoomNumberSelect.addEventListener('change', (evt) => {
+    disablePlacesForRooms(evt.target.value);
+    selectInitialOption(evt.target.value);
+  });
+  formRoomNumberSelect.dispatchEvent(new Event('change'));
+};
 
-disablePlacesForRooms(formRoomNumberSelect.value);
-selectInitialOption(formRoomNumberSelect.value);
-
-export {disableForms, enableForms};
+export {disableForms, enableForms, setValidationForm};

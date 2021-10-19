@@ -1,6 +1,6 @@
 import {createPopup} from './popup.js';
 import {createOffers} from './mock/offers.js';
-import {disableForms, enableForms} from './form.js';
+import {disableForms, enableForms, setValidationForm} from './form.js';
 
 const mapCanvas = document.querySelector('#map-canvas');
 
@@ -10,3 +10,4 @@ mapCanvas.appendChild(popupElement);
 
 disableForms();
 enableForms();
+setValidationForm();
