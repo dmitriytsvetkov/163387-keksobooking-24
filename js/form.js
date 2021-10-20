@@ -1,7 +1,11 @@
 const form = document.querySelector('.ad-form');
-const formRoomNumberSelect = form.querySelector('#room_number');
-const formCapacitySelect = form.querySelector('#capacity');
-const formCapacityOptions = Array.from(formCapacitySelect.options);
+const roomNumberSelect = form.querySelector('#room_number');
+const roomCapacitySelect = form.querySelector('#capacity');
+const roomCapacityOptions = Array.from(roomCapacitySelect.options);
+const flatTypeSelect = form.querySelector('#type');
+const priceInput = form.querySelector('#price');
+const timeInSelect = form.querySelector('#timein');
+const timeOutSelect = form.querySelector('#timeout');
 const disabledFormClass = 'ad-form--disabled';
 
 const roomsCapacityConditions = {
@@ -20,6 +24,14 @@ const roomsCapacityConditions = {
   100 : [
     '0',
   ],
+};
+
+const flatTypeMinPrices = {
+  'bungalow' : '0',
+  'flat' : '1000',
+  'hotel' : '3000',
+  'house' : '5000',
+  'palace' : '10000',
 };
 
 const disableInteractiveElements = (rootSelector, childrenSelector) => {
@@ -52,24 +64,37 @@ const enableForms = () => {
 
 const disablePlacesForRooms = (roomAmount) => {
   const result = roomsCapacityConditions[roomAmount];
-  formCapacityOptions.forEach((element) => {
+  roomCapacityOptions.forEach((element) => {
     element.disabled = !result.includes(element.value);
   });
 };
 
-const selectInitialOption = (rooms) => {
+const selectInitialRoomOption = (rooms) => {
   const result = roomsCapacityConditions[rooms];
-  if (!result.includes(formCapacitySelect.value)) {
-    formCapacitySelect.value = result[0];
+  if (!result.includes(roomCapacitySelect.value)) {
+    roomCapacitySelect.value = result[0];
   }
 };
 
 const setValidationForm = () => {
-  formRoomNumberSelect.addEventListener('change', (evt) => {
+  roomNumberSelect.addEventListener('change', (evt) => {
     disablePlacesForRooms(evt.target.value);
-    selectInitialOption(evt.target.value);
+    selectInitialRoomOption(evt.target.value);
   });
-  formRoomNumberSelect.dispatchEvent(new Event('change'));
+  flatTypeSelect.addEventListener('change', (evt) => {
+    const minValue = evt.target.value;
+    priceInput.placeholder = flatTypeMinPrices[minValue];
+    priceInput.min = flatTypeMinPrices[minValue];
+  });
+  timeOutSelect.addEventListener('change', (evt) => {
+    timeInSelect.value = evt.target.value;
+  });
+  timeInSelect.addEventListener('change', (evt) => {
+    timeOutSelect.value = evt.target.value;
+  });
+  roomNumberSelect.dispatchEvent(new Event('change'));
+  flatTypeSelect.dispatchEvent(new Event('change'));
+  timeOutSelect.dispatchEvent(new Event('change'));
 };
 
 export {disableForms, enableForms, setValidationForm};
