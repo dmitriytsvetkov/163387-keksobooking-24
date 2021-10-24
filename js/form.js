@@ -28,11 +28,11 @@ const roomsCapacityConditions = {
 };
 
 const flatTypeMinPrices = {
-  [HouseTypes.Bungalow]: '0',
-  [HouseTypes.Flat] : '1000',
-  [HouseTypes.Hotel] : '3000',
-  [HouseTypes.House] : '5000',
-  [HouseTypes.Palace] : '10000',
+  [HouseTypes.bungalow]: '0',
+  [HouseTypes.flat] : '1000',
+  [HouseTypes.hotel] : '3000',
+  [HouseTypes.house] : '5000',
+  [HouseTypes.palace] : '10000',
 };
 
 const disableInteractiveElements = (rootSelector, childrenSelector) => {

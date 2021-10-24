@@ -1,9 +1,11 @@
+import {HouseTypes} from './mock/offers.js';
+
 const TRANSLATED_OFFER_TYPES = {
-  Flat: 'Квартира',
-  Bungalow: 'Бунгало',
-  House: 'Дом',
-  Palace: 'Дворец',
-  Hotel: 'Отель',
+  [HouseTypes.flat]: 'Квартира',
+  [HouseTypes.bungalow]: 'Бунгало',
+  [HouseTypes.house]: 'Дом',
+  [HouseTypes.palace]: 'Дворец',
+  [HouseTypes.hotel]: 'Отель',
 };
 
 const createPopup = (offer) => {

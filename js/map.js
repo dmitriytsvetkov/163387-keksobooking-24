@@ -1,5 +1,4 @@
 import {enableForms} from './form.js';
-import {createOffers} from './mock/offers.js';
 import {createPopup} from './popup.js';
 
 const mapContainer = document.querySelector('#map-canvas');
@@ -10,11 +9,11 @@ const TOKYO_COORDS = {
   lng: 139.83947,
 };
 
-const mapInit = () => {
+const mapInit = (offers) => {
   const map = L.map(mapContainer)
     .on('load', () => {
       enableForms();
-      addressInput.value = `${TOKYO_COORDS.lat} ${TOKYO_COORDS.lng}`;
+      addressInput.value = `${TOKYO_COORDS.lat}, ${TOKYO_COORDS.lng}`;
     })
     .setView({
       lat: TOKYO_COORDS.lat,
@@ -48,9 +47,8 @@ const mapInit = () => {
   mainPinMarker.addTo(map);
 
   mainPinMarker.on('move', (evt) => {
-    addressInput.value = `${evt.target.getLatLng().lat.toFixed(5)} ${evt.target.getLatLng().lng.toFixed(5)}`;
+    addressInput.value = `${evt.target.getLatLng().lat.toFixed(5)}, ${evt.target.getLatLng().lng.toFixed(5)}`;
   });
-  const offers = createOffers();
   offers.forEach((offer) => {
     const icon = L.icon({
       iconUrl: '../img/pin.svg',

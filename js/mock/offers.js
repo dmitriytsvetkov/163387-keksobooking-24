@@ -20,11 +20,11 @@ const PHOTOS = [
 ];
 
 const HouseTypes = {
-  Palace: 'palace',
-  Flat: 'flat',
-  House: 'house',
-  Bungalow: 'bungalow',
-  Hotel: 'hotel',
+  palace: 'palace',
+  flat: 'flat',
+  house: 'house',
+  bungalow: 'bungalow',
+  hotel: 'hotel',
 };
 
 const TIMES = [
