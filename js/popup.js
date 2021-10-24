@@ -1,9 +1,9 @@
 const TRANSLATED_OFFER_TYPES = {
-  flat: 'Квартира',
-  bungalow: 'Бунгало',
-  house: 'Дом',
-  palace: 'Дворец',
-  hotel: 'Отель',
+  Flat: 'Квартира',
+  Bungalow: 'Бунгало',
+  House: 'Дом',
+  Palace: 'Дворец',
+  Hotel: 'Отель',
 };
 
 const createPopup = (offer) => {

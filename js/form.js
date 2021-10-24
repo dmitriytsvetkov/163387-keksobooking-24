@@ -1,3 +1,5 @@
+import {HouseTypes} from './mock/offers.js';
+
 const form = document.querySelector('.ad-form');
 const roomNumberSelect = form.querySelector('#room_number');
 const roomCapacitySelect = form.querySelector('#capacity');
@@ -7,7 +9,6 @@ const priceInput = form.querySelector('#price');
 const timeInSelect = form.querySelector('#timein');
 const timeOutSelect = form.querySelector('#timeout');
 const disabledFormClass = 'ad-form--disabled';
-
 const roomsCapacityConditions = {
   1 : [
     '1',
@@ -27,11 +28,11 @@ const roomsCapacityConditions = {
 };
 
 const flatTypeMinPrices = {
-  'bungalow' : '0',
-  'flat' : '1000',
-  'hotel' : '3000',
-  'house' : '5000',
-  'palace' : '10000',
+  [HouseTypes.Bungalow]: '0',
+  [HouseTypes.Flat] : '1000',
+  [HouseTypes.Hotel] : '3000',
+  [HouseTypes.House] : '5000',
+  [HouseTypes.Palace] : '10000',
 };
 
 const disableInteractiveElements = (rootSelector, childrenSelector) => {

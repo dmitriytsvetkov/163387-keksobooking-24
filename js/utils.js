@@ -20,9 +20,14 @@ const getRandomFloat = (minValue, maxValue, precision) => {
 
 const getRandomArrayElement = (elements) => elements[getRandomInteger(0, elements.length - 1)];
 
+const getRandomElementFromObject = (object) => {
+  const keys = Object.keys(object);
+  return keys[Math.floor(Math.random() * keys.length)];
+};
+
 const getRandomArray = ([...source], maxLength) => Array.from(
   { length: Math.min(source.length, 1 + Math.random() * maxLength | 0) },
   () => source.splice(Math.random() * source.length | 0, 1)[0],
 );
 
-export {getRandomInteger, getRandomFloat, getRandomArrayElement, getRandomArray};
+export {getRandomInteger, getRandomFloat, getRandomArrayElement, getRandomArray, getRandomElementFromObject};
