@@ -1,4 +1,4 @@
-import {getRandomArray, getRandomArrayElement, getRandomFloat, getRandomInteger} from '../utils.js';
+import {getRandomArray, getRandomArrayElement, getRandomFloat, getRandomInteger, getRandomElementFromObject} from '../utils.js';
 
 const AVATARS = [
   'img/avatars/user01.png',
@@ -19,13 +19,13 @@ const PHOTOS = [
   'https://assets.htmlacademy.ru/content/intensive/javascript-1/keksobooking/claire-rendall-b6kAwr1i0Iw.jpg',
 ];
 
-const OFFER_TYPES = [
-  'palace',
-  'flat',
-  'house',
-  'bungalow',
-  'hotel',
-];
+const HouseTypes = {
+  palace: 'palace',
+  flat: 'flat',
+  house: 'house',
+  bungalow: 'bungalow',
+  hotel: 'hotel',
+};
 
 const TIMES = [
   '12:00',
@@ -79,7 +79,7 @@ const createOffer = () => {
       title: getRandomArrayElement(TITLES),
       address: `${location.lat}, ${location.lng}`,
       price: getRandomInteger(1, 100),
-      type: getRandomArrayElement(OFFER_TYPES),
+      type: getRandomElementFromObject(HouseTypes),
       rooms: getRandomInteger(1, 5),
       guests: getRandomInteger(1, 4),
       checkin: getRandomArrayElement(TIMES),
@@ -101,4 +101,4 @@ const createOffers = () => {
   return result;
 };
 
-export {createOffers};
+export {createOffers, HouseTypes};
