@@ -1,4 +1,6 @@
 import {HouseTypes} from './mock/offers.js';
+import {createFailPopup} from './popup.js';
+import {sendData} from './api.js';
 
 const form = document.querySelector('.ad-form');
 const roomNumberSelect = form.querySelector('#room_number');
@@ -98,4 +100,19 @@ const setValidationForm = () => {
   timeOutSelect.dispatchEvent(new Event('change'));
 };
 
-export {disableForms, enableForms, setValidationForm};
+const formReset = () => {
+  form.reset();
+};
+
+const setUserFormSubmit = (onSuccess) => {
+  form.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    sendData(
+      () => onSuccess(),
+      () => createFailPopup(),
+      new FormData(evt.target),
+    );
+  });
+};
+
+export {disableForms, enableForms, setValidationForm, setUserFormSubmit, formReset};

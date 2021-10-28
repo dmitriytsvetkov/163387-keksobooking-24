@@ -1,9 +1,11 @@
-import {disableForms, setValidationForm} from './form.js';
+import {disableForms, setUserFormSubmit, setValidationForm} from './form.js';
 import {mapInit} from './map.js';
-import {createOffers} from './mock/offers.js';
+import {createSuccessPopup} from './popup.js';
 
-const offers = createOffers();
+
 disableForms();
-mapInit(offers);
-
+mapInit();
+setUserFormSubmit(createSuccessPopup);
 setValidationForm();
+
+
