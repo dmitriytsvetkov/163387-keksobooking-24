@@ -1,6 +1,4 @@
-import {enableForms} from './form.js';
 import {createPopup} from './popup.js';
-import {getData} from './api.js';
 import {formReset} from './form.js';
 
 const mapContainer = document.querySelector('#map-canvas');
@@ -44,33 +42,30 @@ const mapReset = () => {
   }, 12);
 };
 
-const mapInit = () => {
+const mapInit = (offers) => {
   map
     .on('load', () => {
-      enableForms();
       addressInput.value = `${TOKYO_COORDS.lat}, ${TOKYO_COORDS.lng}`;
-      getData((offers) => {
-        offers.forEach((offer) => {
-          const icon = L.icon({
-            iconUrl: '../img/pin.svg',
-            iconSize: [40, 40],
-            iconAnchor: [20, 40],
-          });
-
-          const marker = L.marker(
-            {
-              lat: offer.location.lat,
-              lng: offer.location.lng,
-            },
-            {
-              icon,
-            },
-          );
-
-          marker
-            .addTo(map)
-            .bindPopup(createPopup(offer));
+      offers.forEach((offer) => {
+        const icon = L.icon({
+          iconUrl: '../img/pin.svg',
+          iconSize: [40, 40],
+          iconAnchor: [20, 40],
         });
+
+        const marker = L.marker(
+          {
+            lat: offer.location.lat,
+            lng: offer.location.lng,
+          },
+          {
+            icon,
+          },
+        );
+
+        marker
+          .addTo(map)
+          .bindPopup(createPopup(offer));
       });
     })
     .setView({

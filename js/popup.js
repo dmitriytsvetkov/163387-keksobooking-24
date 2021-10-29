@@ -1,4 +1,4 @@
-import {HouseTypes} from './mock/offers.js';
+import {HouseTypes} from './utils.js';
 import {formReset} from './form.js';
 import {mapReset} from './map.js';
 
@@ -107,10 +107,13 @@ const createSuccessPopup = () => {
   });
 };
 
-const createFailPopup = () => {
+const createFailPopup = (msg, buttonMessage) => {
   const popupTemplate = document.querySelector('#error ').content.querySelector('.error');
   const popup = popupTemplate.cloneNode(true);
+  const popupMessage = popup.querySelector('.error__message');
   const closeButton = popup.querySelector('.error__button');
+  closeButton.textContent = buttonMessage;
+  popupMessage.textContent = msg;
   document.body.appendChild(popup);
   popup.addEventListener('click', () => {
     popup.remove();

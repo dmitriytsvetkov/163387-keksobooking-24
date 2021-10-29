@@ -1,4 +1,4 @@
-import {HouseTypes} from './mock/offers.js';
+import {HouseTypes} from './utils.js';
 import {createFailPopup} from './popup.js';
 import {sendData} from './api.js';
 
@@ -109,7 +109,7 @@ const setUserFormSubmit = (onSuccess) => {
     evt.preventDefault();
     sendData(
       () => onSuccess(),
-      () => createFailPopup(),
+      () => createFailPopup('При отправке данных произошла ошибка', 'Попробовать снова'),
       new FormData(evt.target),
     );
   });
