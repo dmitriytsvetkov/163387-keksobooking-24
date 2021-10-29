@@ -1,4 +1,6 @@
-import {HouseTypes} from './mock/offers.js';
+import {HouseTypes} from './utils.js';
+import {formReset} from './form.js';
+import {mapReset} from './map.js';
 
 const TRANSLATED_OFFER_TYPES = {
   [HouseTypes.flat]: 'Квартира',
@@ -70,17 +72,61 @@ const createPopup = (offer) => {
   } else {
     popupPhotosList.classList.add('hidden');
   }
-  popupFeaturesList.forEach((item) => {
-    const isNecessary = offer.offer.features.some(
-      (feature) => item.classList.contains(`popup__feature--${feature}`),
-    );
+  if (offer.offer.features) {
+    popupFeaturesList.forEach((item) => {
+      const isNecessary = offer.offer.features.some(
+        (feature) => item.classList.contains(`popup__feature--${feature}`),
+      );
 
-    if (!isNecessary) {
-      item.remove();
-    }
-  });
+      if (!isNecessary) {
+        item.remove();
+      }
+    });
+  } else {
+    popupFeaturesContainer.classList.add('hidden');
+  }
   popupAvatar.src = offer.author.avatar;
   return popup;
 };
 
-export {createPopup};
+const createSuccessPopup = () => {
+  const popupTemplate = document.querySelector('#success').content.querySelector('.success');
+  const popup = popupTemplate.cloneNode(true);
+  document.body.appendChild(popup);
+
+  formReset();
+  mapReset();
+  popup.addEventListener('click', () => {
+    popup.remove();
+  });
+  document.addEventListener('keydown', (evt) => {
+    if (evt.key === 'Escape') {
+      evt.preventDefault();
+      popup.remove();
+    }
+  });
+};
+
+const createFailPopup = (msg, buttonMessage) => {
+  const popupTemplate = document.querySelector('#error ').content.querySelector('.error');
+  const popup = popupTemplate.cloneNode(true);
+  const popupMessage = popup.querySelector('.error__message');
+  const closeButton = popup.querySelector('.error__button');
+  closeButton.textContent = buttonMessage;
+  popupMessage.textContent = msg;
+  document.body.appendChild(popup);
+  popup.addEventListener('click', () => {
+    popup.remove();
+  });
+  closeButton.addEventListener('click', () => {
+    popup.remove();
+  });
+  document.addEventListener('keydown', (evt) => {
+    if (evt.key === 'Escape') {
+      evt.preventDefault();
+      popup.remove();
+    }
+  });
+};
+
+export {createPopup, createSuccessPopup, createFailPopup};

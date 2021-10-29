@@ -1,9 +1,15 @@
-import {disableForms, setValidationForm} from './form.js';
+import {disableForms, setUserFormSubmit, setValidationForm} from './form.js';
 import {mapInit} from './map.js';
-import {createOffers} from './mock/offers.js';
+import {createFailPopup, createSuccessPopup} from './popup.js';
+import {getData} from './api.js';
+import {enableForms} from './form.js';
 
-const offers = createOffers();
 disableForms();
-mapInit(offers);
-
-setValidationForm();
+getData((offers) => {
+  mapInit(offers);
+  enableForms();
+  setUserFormSubmit(createSuccessPopup);
+  setValidationForm();
+}, () => {
+  createFailPopup('Произошла ошибка при загрузке данных', 'OK');
+});
