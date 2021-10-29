@@ -8,11 +8,8 @@ disableForms();
 getData((offers) => {
   mapInit(offers);
   enableForms();
+  setUserFormSubmit(createSuccessPopup);
+  setValidationForm();
 }, () => {
   createFailPopup('Произошла ошибка при загрузке данных', 'OK');
 });
-
-setUserFormSubmit(createSuccessPopup);
-setValidationForm();
-
-
