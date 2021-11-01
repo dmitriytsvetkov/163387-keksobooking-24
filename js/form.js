@@ -1,6 +1,7 @@
 import {HouseTypes} from './utils.js';
 import {createFailPopup} from './popup.js';
 import {sendData} from './api.js';
+import {clearMarkers} from './map.js';
 
 const form = document.querySelector('.ad-form');
 const roomNumberSelect = form.querySelector('#room_number');
@@ -102,6 +103,7 @@ const setValidationForm = () => {
 
 const formReset = () => {
   form.reset();
+  setValidationForm();
 };
 
 const setUserFormSubmit = (onSuccess) => {
@@ -115,4 +117,160 @@ const setUserFormSubmit = (onSuccess) => {
   });
 };
 
-export {disableForms, enableForms, setValidationForm, setUserFormSubmit, formReset};
+const mapFiltersForm = document.querySelector('.map__filters');
+const housingTypeSelect = mapFiltersForm.querySelector('#housing-type');
+const housingPriceSelect = mapFiltersForm.querySelector('#housing-price');
+const housingRoomsSelect = mapFiltersForm.querySelector('#housing-rooms');
+const housingGuestsSelect = mapFiltersForm.querySelector('#housing-guests');
+const featuresCheckboxes = mapFiltersForm.querySelectorAll('.map__feature');
+
+const HousingPricesConditions = {
+  'low': 10000,
+  'middle': 49999,
+  'high': 50000,
+};
+
+const compareGuests = (offer) => {
+  if (housingGuestsSelect.value === 'any') {
+    return true;
+  }
+  return offer.guests === +housingGuestsSelect.value;
+};
+
+const compareRooms = (offer) => {
+  if (housingRoomsSelect.value === 'any') {
+    return true;
+  }
+  return offer.rooms === +housingRoomsSelect.value;
+};
+
+const comparePrice = (offer) => {
+  let result;
+  if (housingPriceSelect.value === 'any') {
+    return true;
+  }
+  if (offer.price <= HousingPricesConditions.low) {
+    result = 'low';
+  } else if (offer.price > HousingPricesConditions.low && offer.price < HousingPricesConditions.middle) {
+    result = 'middle';
+  } else {
+    result = 'high';
+  }
+
+  return result === housingPriceSelect.value;
+};
+
+const compareType = (offer) => {
+  if (housingTypeSelect.value === 'any') {
+    return true;
+  }
+  return offer.type === housingTypeSelect.value;
+};
+
+const filterOffers = ({offer}) => compareType(offer) && comparePrice(offer) && compareRooms(offer) && compareGuests(offer);
+
+const setTypeClick = (cb) => {
+  housingTypeSelect.addEventListener('change', () => {
+    clearMarkers();
+    cb();
+  });
+};
+
+const setPriceClick = (cb) => {
+  housingPriceSelect.addEventListener('change', () => {
+    clearMarkers();
+    cb();
+  });
+};
+
+const setRoomsClick = (cb) => {
+  housingRoomsSelect.addEventListener('change', () => {
+    clearMarkers();
+    cb();
+  });
+};
+
+const setHousingGuestsClick = (cb) => {
+  housingGuestsSelect.addEventListener('change', () => {
+    clearMarkers();
+    cb();
+  });
+};
+
+const setFeaturesClick = (cb) => {
+  featuresCheckboxes.forEach((element) => {
+    element.addEventListener('click', () => {
+      clearMarkers();
+      cb();
+    });
+  });
+
+};
+
+const getOfferRank = (offer) => {
+  if (!offer.offer.features) {
+    return;
+  }
+  const offerFeaturesList = offer.offer.features;
+  const wifiInput = document.querySelector('#filter-wifi');
+  const dishwasherInput = document.querySelector('#filter-dishwasher');
+  const parkingInput = document.querySelector('#filter-parking');
+  const washerInput = document.querySelector('#filter-washer');
+  const elevatorInput = document.querySelector('#filter-elevator');
+  const conditionerInput = document.querySelector('#filter-conditioner');
+
+  let rank = 0;
+
+  if (wifiInput.checked) {
+    offerFeaturesList.forEach((element) => {
+      if (element === wifiInput.value) {
+        rank += 1;
+      }
+    });
+  }
+  if (dishwasherInput.checked) {
+    offerFeaturesList.forEach((element) => {
+      if (element === dishwasherInput.value) {
+        rank += 1;
+      }
+    });
+  }
+  if (parkingInput.checked) {
+    offerFeaturesList.forEach((element) => {
+      if (element === parkingInput.value) {
+        rank += 1;
+      }
+    });
+  }
+  if (washerInput.checked) {
+    offerFeaturesList.forEach((element) => {
+      if (element === washerInput.value) {
+        rank += 1;
+      }
+    });
+  }
+  if (elevatorInput.checked) {
+    offerFeaturesList.forEach((element) => {
+      if (element === elevatorInput.value) {
+        rank += 1;
+      }
+    });
+  }
+  if (conditionerInput.checked) {
+    offerFeaturesList.forEach((element) => {
+      if (element === conditionerInput.value) {
+        rank += 1;
+      }
+    });
+  }
+  return rank;
+};
+
+const compareOffers = (offerA, offerB) => {
+  const rankA = getOfferRank(offerA);
+  const rankB = getOfferRank(offerB);
+
+  return rankB - rankA;
+};
+
+export {disableForms, enableForms, setValidationForm, setUserFormSubmit, formReset, setTypeClick, setPriceClick, setRoomsClick, setHousingGuestsClick, setFeaturesClick, filterOffers, getOfferRank, compareOffers};
