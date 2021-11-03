@@ -12,6 +12,12 @@ const priceInput = form.querySelector('#price');
 const timeInSelect = form.querySelector('#timein');
 const timeOutSelect = form.querySelector('#timeout');
 const disabledFormClass = 'ad-form--disabled';
+const mapFiltersForm = document.querySelector('.map__filters');
+const housingTypeSelect = mapFiltersForm.querySelector('#housing-type');
+const housingPriceSelect = mapFiltersForm.querySelector('#housing-price');
+const housingRoomsSelect = mapFiltersForm.querySelector('#housing-rooms');
+const housingGuestsSelect = mapFiltersForm.querySelector('#housing-guests');
+const mapCheckboxes = mapFiltersForm.querySelectorAll('.map__checkbox');
 const roomsCapacityConditions = {
   1 : [
     '1',
@@ -36,6 +42,12 @@ const flatTypeMinPrices = {
   [HouseTypes.hotel] : '3000',
   [HouseTypes.house] : '5000',
   [HouseTypes.palace] : '10000',
+};
+
+const HousingPricesConditions = {
+  'low': 10000,
+  'middle': 49999,
+  'high': 50000,
 };
 
 const disableInteractiveElements = (rootSelector, childrenSelector) => {
@@ -117,19 +129,6 @@ const setUserFormSubmit = (onSuccess) => {
   });
 };
 
-const mapFiltersForm = document.querySelector('.map__filters');
-const housingTypeSelect = mapFiltersForm.querySelector('#housing-type');
-const housingPriceSelect = mapFiltersForm.querySelector('#housing-price');
-const housingRoomsSelect = mapFiltersForm.querySelector('#housing-rooms');
-const housingGuestsSelect = mapFiltersForm.querySelector('#housing-guests');
-const featuresCheckboxes = mapFiltersForm.querySelectorAll('.map__feature');
-
-const HousingPricesConditions = {
-  'low': 10000,
-  'middle': 49999,
-  'high': 50000,
-};
-
 const compareGuests = (offer) => {
   if (housingGuestsSelect.value === 'any') {
     return true;
@@ -167,7 +166,24 @@ const compareType = (offer) => {
   return offer.type === housingTypeSelect.value;
 };
 
-const filterOffers = ({offer}) => compareType(offer) && comparePrice(offer) && compareRooms(offer) && compareGuests(offer);
+const compareFeatures = (offer) => {
+  const checkedCheckboxes = [];
+  mapFiltersForm.querySelectorAll('input:checked').forEach((element) => {
+    checkedCheckboxes.push(element.value);
+  });
+  if (checkedCheckboxes.length === 0) {
+    return true;
+  } else {
+    if (offer.features) {
+      const filteredArray = offer.features.filter((feature) => checkedCheckboxes.includes(feature));
+      return !(filteredArray.length === 0 || !filteredArray || filteredArray.length !== checkedCheckboxes.length);
+    } else {
+      return false;
+    }
+  }
+};
+
+const filterOffers = ({offer}) => compareType(offer) && comparePrice(offer) && compareRooms(offer) && compareGuests(offer) && compareFeatures(offer);
 
 const setTypeClick = (cb) => {
   housingTypeSelect.addEventListener('change', () => {
@@ -196,81 +212,13 @@ const setHousingGuestsClick = (cb) => {
     cb();
   });
 };
-
 const setFeaturesClick = (cb) => {
-  featuresCheckboxes.forEach((element) => {
-    element.addEventListener('click', () => {
+  mapCheckboxes.forEach((element) => {
+    element.addEventListener('change', () => {
       clearMarkers();
       cb();
     });
   });
-
 };
 
-const getOfferRank = (offer) => {
-  if (!offer.offer.features) {
-    return;
-  }
-  const offerFeaturesList = offer.offer.features;
-  const wifiInput = document.querySelector('#filter-wifi');
-  const dishwasherInput = document.querySelector('#filter-dishwasher');
-  const parkingInput = document.querySelector('#filter-parking');
-  const washerInput = document.querySelector('#filter-washer');
-  const elevatorInput = document.querySelector('#filter-elevator');
-  const conditionerInput = document.querySelector('#filter-conditioner');
-
-  let rank = 0;
-
-  if (wifiInput.checked) {
-    offerFeaturesList.forEach((element) => {
-      if (element === wifiInput.value) {
-        rank += 1;
-      }
-    });
-  }
-  if (dishwasherInput.checked) {
-    offerFeaturesList.forEach((element) => {
-      if (element === dishwasherInput.value) {
-        rank += 1;
-      }
-    });
-  }
-  if (parkingInput.checked) {
-    offerFeaturesList.forEach((element) => {
-      if (element === parkingInput.value) {
-        rank += 1;
-      }
-    });
-  }
-  if (washerInput.checked) {
-    offerFeaturesList.forEach((element) => {
-      if (element === washerInput.value) {
-        rank += 1;
-      }
-    });
-  }
-  if (elevatorInput.checked) {
-    offerFeaturesList.forEach((element) => {
-      if (element === elevatorInput.value) {
-        rank += 1;
-      }
-    });
-  }
-  if (conditionerInput.checked) {
-    offerFeaturesList.forEach((element) => {
-      if (element === conditionerInput.value) {
-        rank += 1;
-      }
-    });
-  }
-  return rank;
-};
-
-const compareOffers = (offerA, offerB) => {
-  const rankA = getOfferRank(offerA);
-  const rankB = getOfferRank(offerB);
-
-  return rankB - rankA;
-};
-
-export {disableForms, enableForms, setValidationForm, setUserFormSubmit, formReset, setTypeClick, setPriceClick, setRoomsClick, setHousingGuestsClick, setFeaturesClick, filterOffers, getOfferRank, compareOffers};
+export {disableForms, enableForms, setValidationForm, setUserFormSubmit, formReset, setTypeClick, setPriceClick, setRoomsClick, setHousingGuestsClick, setFeaturesClick, filterOffers};

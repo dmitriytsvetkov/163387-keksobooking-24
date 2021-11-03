@@ -1,5 +1,5 @@
 import {createPopup} from './popup.js';
-import {formReset, filterOffers, compareOffers} from './form.js';
+import {formReset, filterOffers} from './form.js';
 
 const mapContainer = document.querySelector('#map-canvas');
 const addressInput = document.querySelector('#address');
@@ -48,7 +48,6 @@ const createOffers = (offers) => {
   offers
     .slice()
     .filter(filterOffers)
-    .sort(compareOffers)
     .slice(0, 10)
     .forEach((offer) => {
       const icon = L.icon({
