@@ -1,6 +1,7 @@
 import {HouseTypes} from './utils.js';
 import {createFailPopup} from './popup.js';
 import {sendData} from './api.js';
+import {clearMarkers} from './map.js';
 
 const form = document.querySelector('.ad-form');
 const roomNumberSelect = form.querySelector('#room_number');
@@ -11,6 +12,12 @@ const priceInput = form.querySelector('#price');
 const timeInSelect = form.querySelector('#timein');
 const timeOutSelect = form.querySelector('#timeout');
 const disabledFormClass = 'ad-form--disabled';
+const mapFiltersForm = document.querySelector('.map__filters');
+const housingTypeSelect = mapFiltersForm.querySelector('#housing-type');
+const housingPriceSelect = mapFiltersForm.querySelector('#housing-price');
+const housingRoomsSelect = mapFiltersForm.querySelector('#housing-rooms');
+const housingGuestsSelect = mapFiltersForm.querySelector('#housing-guests');
+const mapCheckboxes = mapFiltersForm.querySelectorAll('.map__checkbox');
 const roomsCapacityConditions = {
   1 : [
     '1',
@@ -35,6 +42,12 @@ const flatTypeMinPrices = {
   [HouseTypes.hotel] : '3000',
   [HouseTypes.house] : '5000',
   [HouseTypes.palace] : '10000',
+};
+
+const HousingPricesConditions = {
+  'low': 10000,
+  'middle': 49999,
+  'high': 50000,
 };
 
 const disableInteractiveElements = (rootSelector, childrenSelector) => {
@@ -102,6 +115,7 @@ const setValidationForm = () => {
 
 const formReset = () => {
   form.reset();
+  setValidationForm();
 };
 
 const setUserFormSubmit = (onSuccess) => {
@@ -115,4 +129,96 @@ const setUserFormSubmit = (onSuccess) => {
   });
 };
 
-export {disableForms, enableForms, setValidationForm, setUserFormSubmit, formReset};
+const compareGuests = (offer) => {
+  if (housingGuestsSelect.value === 'any') {
+    return true;
+  }
+  return offer.guests === +housingGuestsSelect.value;
+};
+
+const compareRooms = (offer) => {
+  if (housingRoomsSelect.value === 'any') {
+    return true;
+  }
+  return offer.rooms === +housingRoomsSelect.value;
+};
+
+const comparePrice = (offer) => {
+  let result;
+  if (housingPriceSelect.value === 'any') {
+    return true;
+  }
+  if (offer.price <= HousingPricesConditions.low) {
+    result = 'low';
+  } else if (offer.price > HousingPricesConditions.low && offer.price < HousingPricesConditions.middle) {
+    result = 'middle';
+  } else {
+    result = 'high';
+  }
+
+  return result === housingPriceSelect.value;
+};
+
+const compareType = (offer) => {
+  if (housingTypeSelect.value === 'any') {
+    return true;
+  }
+  return offer.type === housingTypeSelect.value;
+};
+
+const compareFeatures = (offer) => {
+  const checkedCheckboxes = [];
+  mapFiltersForm.querySelectorAll('input:checked').forEach((element) => {
+    checkedCheckboxes.push(element.value);
+  });
+  if (checkedCheckboxes.length === 0) {
+    return true;
+  } else {
+    if (offer.features) {
+      const filteredArray = offer.features.filter((feature) => checkedCheckboxes.includes(feature));
+      return filteredArray.length === checkedCheckboxes.length;
+    } else {
+      return false;
+    }
+  }
+};
+
+const filterOffers = ({offer}) => compareType(offer) && comparePrice(offer) && compareRooms(offer) && compareGuests(offer) && compareFeatures(offer);
+
+const setTypeClick = (cb) => {
+  housingTypeSelect.addEventListener('change', () => {
+    clearMarkers();
+    cb();
+  });
+};
+
+const setPriceClick = (cb) => {
+  housingPriceSelect.addEventListener('change', () => {
+    clearMarkers();
+    cb();
+  });
+};
+
+const setRoomsClick = (cb) => {
+  housingRoomsSelect.addEventListener('change', () => {
+    clearMarkers();
+    cb();
+  });
+};
+
+const setHousingGuestsClick = (cb) => {
+  housingGuestsSelect.addEventListener('change', () => {
+    clearMarkers();
+    cb();
+  });
+};
+const setFeaturesClick = (cb) => {
+  mapCheckboxes.forEach((element) => {
+    element.addEventListener('change', () => {
+      clearMarkers();
+      cb();
+    });
+  });
+};
+
+export {disableForms, enableForms, setValidationForm, setUserFormSubmit, formReset, setTypeClick, setPriceClick, setRoomsClick, setHousingGuestsClick, setFeaturesClick, filterOffers};

@@ -1,5 +1,5 @@
 import {createPopup} from './popup.js';
-import {formReset} from './form.js';
+import {formReset, filterOffers} from './form.js';
 
 const mapContainer = document.querySelector('#map-canvas');
 const addressInput = document.querySelector('#address');
@@ -9,6 +9,8 @@ const TOKYO_COORDS = {
   lat: 35.65283,
   lng: 139.83947,
 };
+
+const markers = [];
 
 const map = L.map(mapContainer);
 
@@ -42,31 +44,36 @@ const mapReset = () => {
   }, 12);
 };
 
+const createOffers = (offers) => {
+  offers
+    .slice()
+    .filter(filterOffers)
+    .slice(0, 10)
+    .forEach((offer) => {
+      const icon = L.icon({
+        iconUrl: '../img/pin.svg',
+        iconSize: [40, 40],
+        iconAnchor: [20, 40],
+      });
+      const marker = L.marker(
+        {
+          lat: offer.location.lat,
+          lng: offer.location.lng,
+        },
+        {
+          icon,
+        },
+      );
+      markers.push(marker);
+      marker.addTo(map).bindPopup(createPopup(offer));
+    });
+};
+
 const mapInit = (offers) => {
   map
     .on('load', () => {
       addressInput.value = `${TOKYO_COORDS.lat}, ${TOKYO_COORDS.lng}`;
-      offers.forEach((offer) => {
-        const icon = L.icon({
-          iconUrl: '../img/pin.svg',
-          iconSize: [40, 40],
-          iconAnchor: [20, 40],
-        });
-
-        const marker = L.marker(
-          {
-            lat: offer.location.lat,
-            lng: offer.location.lng,
-          },
-          {
-            icon,
-          },
-        );
-
-        marker
-          .addTo(map)
-          .bindPopup(createPopup(offer));
-      });
+      createOffers(offers);
     })
     .setView({
       lat: TOKYO_COORDS.lat,
@@ -93,4 +100,10 @@ const mapInit = (offers) => {
   });
 };
 
-export {mapInit, mapReset};
+const clearMarkers = () => {
+  markers.forEach((marker) => {
+    marker.remove();
+  });
+};
+
+export {mapInit, mapReset, clearMarkers, createOffers};
