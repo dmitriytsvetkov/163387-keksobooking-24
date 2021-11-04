@@ -176,7 +176,7 @@ const compareFeatures = (offer) => {
   } else {
     if (offer.features) {
       const filteredArray = offer.features.filter((feature) => checkedCheckboxes.includes(feature));
-      return !(filteredArray.length === 0 || !filteredArray || filteredArray.length !== checkedCheckboxes.length);
+      return filteredArray.length === checkedCheckboxes.length;
     } else {
       return false;
     }
