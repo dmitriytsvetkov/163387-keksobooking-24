@@ -4,6 +4,7 @@ import {createFailPopup, createSuccessPopup} from './popup.js';
 import {getData} from './api.js';
 import {enableForms} from './form.js';
 import {debounce} from './utils/debounce.js';
+import {setFilesPreview} from './fileUpload.js';
 
 const RERENDER_DELAY = 500;
 
@@ -13,6 +14,7 @@ getData((offers) => {
   enableForms();
   setUserFormSubmit(createSuccessPopup);
   setValidationForm();
+  setFilesPreview();
   setTypeClick(debounce(
     () => createOffers(offers),
     RERENDER_DELAY,
