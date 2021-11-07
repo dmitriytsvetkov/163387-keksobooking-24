@@ -1,5 +1,5 @@
 import {HouseTypes} from './utils.js';
-import {createSuccessPopup} from './popup.js';
+import {createFailPopup} from './popup.js';
 import {sendData} from './api.js';
 
 const form = document.querySelector('.ad-form');
@@ -125,7 +125,7 @@ const setUserFormSubmit = (onSuccess) => {
       await sendData(new FormData(evt.target));
       onSuccess();
     } catch (err) {
-      createSuccessPopup();
+      createFailPopup('Не удалось отправить форму', 'OK');
     }
   });
 };
