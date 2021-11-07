@@ -1,6 +1,8 @@
 import {createPopup} from './popup.js';
 import {formReset, filterOffers} from './form.js';
+import {debounce} from './utils/debounce.js';
 
+const RERENDER_DELAY = 500;
 const mapContainer = document.querySelector('#map-canvas');
 const addressInput = document.querySelector('#address');
 const resetButton = document.querySelector('.ad-form__reset');
@@ -105,5 +107,11 @@ const clearMarkers = () => {
     marker.remove();
   });
 };
+const rerenderMap = debounce(
+  (offers) => {
+    clearMarkers();
+    createOffers(offers);
+  }, RERENDER_DELAY,
+);
 
-export {mapInit, mapReset, clearMarkers, createOffers};
+export {mapInit, mapReset, rerenderMap};

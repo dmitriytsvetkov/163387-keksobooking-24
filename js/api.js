@@ -17,20 +17,13 @@ const sendData = (onSuccess, onFail, body) => {
     });
 };
 
-const getData = (onSuccess, onError) => {
-  fetch('https://24.javascript.pages.academy/keksobooking/data')
-    .then((response) => {
-      if (response.ok) {
-        return response.json();
-      }
-      throw new Error(`${response.status} ${response.statusText}`);
-    })
-    .then((offers) => {
-      onSuccess(offers);
-    })
-    .catch((err) => {
-      onError(err);
-    });
+const getData = async () => {
+  const response = await fetch('https://24.javascript.pages.academy/keksobooking/data');
+  if (!response.ok) {
+    throw new Error(`${response.status} ${response.statusText}`);
+  }
+
+  return response.json();
 };
 
 export {sendData, getData};
