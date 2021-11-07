@@ -1,4 +1,4 @@
-import {HouseTypes} from './utils.js';
+import {HouseTypes, isEscKeyPressed} from './utils.js';
 import {formReset} from './form.js';
 import {mapReset} from './map.js';
 
@@ -100,7 +100,7 @@ const createSuccessPopup = () => {
     popup.remove();
   });
   document.addEventListener('keydown', (evt) => {
-    if (evt.key === 'Escape') {
+    if (isEscKeyPressed(evt.key)) {
       evt.preventDefault();
       popup.remove();
     }
@@ -122,7 +122,7 @@ const createFailPopup = (msg, buttonMessage) => {
     popup.remove();
   });
   document.addEventListener('keydown', (evt) => {
-    if (evt.key === 'Escape') {
+    if (isEscKeyPressed(evt.key)) {
       evt.preventDefault();
       popup.remove();
     }

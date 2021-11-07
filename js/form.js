@@ -1,5 +1,5 @@
 import {HouseTypes} from './utils.js';
-import {createFailPopup} from './popup.js';
+import {createSuccessPopup} from './popup.js';
 import {sendData} from './api.js';
 
 const form = document.querySelector('.ad-form');
@@ -114,17 +114,19 @@ const setValidationForm = () => {
 
 const formReset = () => {
   form.reset();
+  mapFiltersForm.reset();
   setValidationForm();
 };
 
 const setUserFormSubmit = (onSuccess) => {
-  form.addEventListener('submit', (evt) => {
-    evt.preventDefault();
-    sendData(
-      () => onSuccess(),
-      () => createFailPopup('При отправке данных произошла ошибка', 'Попробовать снова'),
-      new FormData(evt.target),
-    );
+  form.addEventListener('submit', async (evt) => {
+    try {
+      evt.preventDefault();
+      await sendData(new FormData(evt.target));
+      onSuccess();
+    } catch (err) {
+      createSuccessPopup();
+    }
   });
 };
 
@@ -215,12 +217,12 @@ const setFeaturesClick = (cb) => {
   });
 };
 
-function setAll(cb) {
+const setAllFilters = (cb) => {
   setTypeClick(cb);
   setPriceClick(cb);
   setRoomsClick(cb);
   setHousingGuestsClick(cb);
   setFeaturesClick(cb);
-}
+};
 
-export {disableForms, enableForms, setValidationForm, setUserFormSubmit, formReset, setAll, filterOffers};
+export {disableForms, enableForms, setValidationForm, setUserFormSubmit, formReset, setAllFilters, filterOffers};

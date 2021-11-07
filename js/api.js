@@ -1,20 +1,13 @@
-const sendData = (onSuccess, onFail, body) => {
-  fetch('https://24.javascript.pages.academy/keksobooking',
-    {
-      method: 'POST',
-      body: body,
-    },
-  )
-    .then((response) => {
-      if (response.ok) {
-        onSuccess();
-      } else {
-        onFail();
-      }
-    })
-    .catch(() => {
-      onFail();
-    });
+const sendData = async (body) => {
+  const response = await fetch('https://24.javascript.pages.academy/keksobooking', {
+    method: 'POST',
+    body: body,
+  });
+  if (!response.ok) {
+    throw new Error(`${response.status} ${response.statusText}`);
+  }
+
+  return response.json();
 };
 
 const getData = async () => {
@@ -26,4 +19,4 @@ const getData = async () => {
   return response.json();
 };
 
-export {sendData, getData};
+export {getData, sendData};

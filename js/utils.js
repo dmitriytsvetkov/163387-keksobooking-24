@@ -6,4 +6,6 @@ const HouseTypes = {
   hotel: 'hotel',
 };
 
-export {HouseTypes};
+const isEscKeyPressed = (keyCode) => keyCode === 'Escape';
+
+export {HouseTypes, isEscKeyPressed};
