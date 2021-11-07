@@ -1,14 +1,16 @@
 import {createPopup} from './popup.js';
 import {formReset, filterOffers} from './form.js';
+import {debounce} from './utils/debounce.js';
 
 const mapContainer = document.querySelector('#map-canvas');
 const addressInput = document.querySelector('#address');
 const resetButton = document.querySelector('.ad-form__reset');
-
 const TOKYO_COORDS = {
   lat: 35.65283,
   lng: 139.83947,
 };
+
+const RERENDER_DELAY = 500;
 
 const markers = [];
 
@@ -69,6 +71,19 @@ const createOffers = (offers) => {
     });
 };
 
+const clearMarkers = () => {
+  markers.forEach((marker) => {
+    marker.remove();
+  });
+};
+
+const rerenderMap = debounce(
+  (offers) => {
+    clearMarkers();
+    createOffers(offers);
+  }, RERENDER_DELAY,
+);
+
 const mapInit = (offers) => {
   map
     .on('load', () => {
@@ -97,13 +112,8 @@ const mapInit = (offers) => {
     evt.preventDefault();
     formReset();
     mapReset();
+    rerenderMap(offers);
   });
 };
 
-const clearMarkers = () => {
-  markers.forEach((marker) => {
-    marker.remove();
-  });
-};
-
-export {mapInit, mapReset, clearMarkers, createOffers};
+export {mapInit, mapReset, rerenderMap};

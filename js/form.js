@@ -1,7 +1,6 @@
 import {HouseTypes} from './utils.js';
-import {createFailPopup} from './popup.js';
+import {createSuccessPopup} from './popup.js';
 import {sendData} from './api.js';
-import {clearMarkers} from './map.js';
 
 const form = document.querySelector('.ad-form');
 const roomNumberSelect = form.querySelector('#room_number');
@@ -115,17 +114,19 @@ const setValidationForm = () => {
 
 const formReset = () => {
   form.reset();
+  mapFiltersForm.reset();
   setValidationForm();
 };
 
 const setUserFormSubmit = (onSuccess) => {
-  form.addEventListener('submit', (evt) => {
-    evt.preventDefault();
-    sendData(
-      () => onSuccess(),
-      () => createFailPopup('При отправке данных произошла ошибка', 'Попробовать снова'),
-      new FormData(evt.target),
-    );
+  form.addEventListener('submit', async (evt) => {
+    try {
+      evt.preventDefault();
+      await sendData(new FormData(evt.target));
+      onSuccess();
+    } catch (err) {
+      createSuccessPopup();
+    }
   });
 };
 
@@ -187,38 +188,41 @@ const filterOffers = ({offer}) => compareType(offer) && comparePrice(offer) && c
 
 const setTypeClick = (cb) => {
   housingTypeSelect.addEventListener('change', () => {
-    clearMarkers();
     cb();
   });
 };
 
 const setPriceClick = (cb) => {
   housingPriceSelect.addEventListener('change', () => {
-    clearMarkers();
     cb();
   });
 };
 
 const setRoomsClick = (cb) => {
   housingRoomsSelect.addEventListener('change', () => {
-    clearMarkers();
     cb();
   });
 };
 
 const setHousingGuestsClick = (cb) => {
   housingGuestsSelect.addEventListener('change', () => {
-    clearMarkers();
     cb();
   });
 };
 const setFeaturesClick = (cb) => {
   mapCheckboxes.forEach((element) => {
     element.addEventListener('change', () => {
-      clearMarkers();
       cb();
     });
   });
 };
 
-export {disableForms, enableForms, setValidationForm, setUserFormSubmit, formReset, setTypeClick, setPriceClick, setRoomsClick, setHousingGuestsClick, setFeaturesClick, filterOffers};
+const setAllFilters = (cb) => {
+  setTypeClick(cb);
+  setPriceClick(cb);
+  setRoomsClick(cb);
+  setHousingGuestsClick(cb);
+  setFeaturesClick(cb);
+};
+
+export {disableForms, enableForms, setValidationForm, setUserFormSubmit, formReset, setAllFilters, filterOffers};
