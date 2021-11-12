@@ -1,6 +1,6 @@
-import {HouseTypes, isEscKeyPressed} from './utils.js';
+import {HouseTypes} from './utils.js';
 import {formReset} from './form.js';
-import {mapReset} from './map.js';
+import {mapReset, rerenderMap} from './map.js';
 
 const TRANSLATED_OFFER_TYPES = {
   [HouseTypes.flat]: 'Квартира',
@@ -9,6 +9,8 @@ const TRANSLATED_OFFER_TYPES = {
   [HouseTypes.palace]: 'Дворец',
   [HouseTypes.hotel]: 'Отель',
 };
+const successTemplate = document.querySelector('#success').content.querySelector('.success');
+const errorTemplate = document.querySelector('#error ').content.querySelector('.error');
 
 const createPopup = (offer) => {
   const popupTemplate = document.querySelector('#card').content.querySelector('.popup');
@@ -89,44 +91,46 @@ const createPopup = (offer) => {
   return popup;
 };
 
-const createSuccessPopup = () => {
-  const popupTemplate = document.querySelector('#success').content.querySelector('.success');
-  const popup = popupTemplate.cloneNode(true);
-  document.body.appendChild(popup);
+const createMessage = (template, message, className) => {
+  const block = template.cloneNode(true);
+  const content = block.querySelector(className);
 
-  formReset();
-  mapReset();
-  popup.addEventListener('click', () => {
-    popup.remove();
-  });
-  document.addEventListener('keydown', (evt) => {
-    if (isEscKeyPressed(evt.key)) {
-      evt.preventDefault();
-      popup.remove();
+  const onEscKeydown = (evt) => {
+    if (evt.key === 'Escape') {
+      document.removeEventListener('keydown', onEscKeydown);
+      block.remove();
     }
-  });
+  };
+
+  const removeEvent = () => {
+    document.removeEventListener('keydown', onEscKeydown);
+  };
+
+  const onBlockClick = () => {
+    removeEvent();
+    block.remove();
+  };
+
+  if (message) {
+    content.textContent = message;
+  }
+
+  document.body.append(block);
+
+  document.addEventListener('keydown', onEscKeydown);
+  block.addEventListener('click', onBlockClick);
+  removeEvent();
 };
 
-const createFailPopup = (msg, buttonMessage) => {
-  const popupTemplate = document.querySelector('#error ').content.querySelector('.error');
-  const popup = popupTemplate.cloneNode(true);
-  const popupMessage = popup.querySelector('.error__message');
-  const closeButton = popup.querySelector('.error__button');
-  closeButton.textContent = buttonMessage;
-  popupMessage.textContent = msg;
-  document.body.appendChild(popup);
-  popup.addEventListener('click', () => {
-    popup.remove();
-  });
-  closeButton.addEventListener('click', () => {
-    popup.remove();
-  });
-  document.addEventListener('keydown', (evt) => {
-    if (isEscKeyPressed(evt.key)) {
-      evt.preventDefault();
-      popup.remove();
-    }
-  });
+const createSuccessPopup = (offers) => (message) => {
+  createMessage(successTemplate, message, '.success__message');
+  formReset();
+  mapReset();
+  rerenderMap(offers);
+};
+
+const createFailPopup = (message) => {
+  createMessage(errorTemplate, message, '.error__message');
 };
 
 export {createPopup, createSuccessPopup, createFailPopup};

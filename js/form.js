@@ -1,6 +1,7 @@
 import {HouseTypes} from './utils.js';
 import {createFailPopup} from './popup.js';
 import {sendData} from './api.js';
+import {clearPreviews} from './photo-upload.js';
 
 const form = document.querySelector('.ad-form');
 const roomNumberSelect = form.querySelector('#room_number');
@@ -113,6 +114,7 @@ const setValidationForm = () => {
 };
 
 const formReset = () => {
+  clearPreviews();
   form.reset();
   mapFiltersForm.reset();
   setValidationForm();
@@ -125,30 +127,19 @@ const setUserFormSubmit = (onSuccess) => {
       await sendData(new FormData(evt.target));
       onSuccess();
     } catch (err) {
-      createFailPopup('Не удалось отправить форму', 'OK');
+      createFailPopup();
     }
   });
 };
 
-const compareGuests = (offer) => {
-  if (housingGuestsSelect.value === 'any') {
-    return true;
-  }
-  return offer.guests === +housingGuestsSelect.value;
-};
+const compareGuests = (offer) => housingGuestsSelect.value === 'any' || (+housingGuestsSelect.value === offer.guests);
 
-const compareRooms = (offer) => {
-  if (housingRoomsSelect.value === 'any') {
-    return true;
-  }
-  return offer.rooms === +housingRoomsSelect.value;
-};
+const compareRooms = (offer) => housingRoomsSelect.value === 'any' || (offer.rooms === +housingRoomsSelect.value);
+
+const compareType = (offer) => housingTypeSelect.value === 'any' || (offer.type === housingTypeSelect.value);
 
 const comparePrice = (offer) => {
   let result;
-  if (housingPriceSelect.value === 'any') {
-    return true;
-  }
   if (offer.price <= HousingPricesConditions.low) {
     result = 'low';
   } else if (offer.price > HousingPricesConditions.low && offer.price < HousingPricesConditions.middle) {
@@ -157,14 +148,7 @@ const comparePrice = (offer) => {
     result = 'high';
   }
 
-  return result === housingPriceSelect.value;
-};
-
-const compareType = (offer) => {
-  if (housingTypeSelect.value === 'any') {
-    return true;
-  }
-  return offer.type === housingTypeSelect.value;
+  return housingPriceSelect.value === 'any' || (result === housingPriceSelect.value);
 };
 
 const compareFeatures = (offer) => {

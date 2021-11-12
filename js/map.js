@@ -1,31 +1,39 @@
-import {createPopup} from './popup.js';
-import {formReset, filterOffers} from './form.js';
+import {createFailPopup, createPopup} from './popup.js';
+import {formReset, filterOffers, enableForms} from './form.js';
 import {debounce} from './utils/debounce.js';
+import {getData} from './api.js';
+
+const MapSettings = {
+  ZOOM: 12,
+  MAX_OFFERS_COUNT: 10,
+  MAIN_ICON_WIDTH: 52,
+  MAIN_ICON_HEIGHT: 52,
+  OFFER_ICON_WIDTH: 40,
+  OFFER_ICON_HEIGHT: 40,
+  MAIN_PIN_ICON_URL: 'img/main-pin.svg',
+  OFFER_PIN_ICON_URL: 'img/pin.svg',
+  TOKYO_LAT: 35.65283,
+  TOKYO_LNG: 139.83947,
+  DIVIDER: 2,
+};
 
 const mapContainer = document.querySelector('#map-canvas');
 const addressInput = document.querySelector('#address');
 const resetButton = document.querySelector('.ad-form__reset');
-const TOKYO_COORDS = {
-  lat: 35.65283,
-  lng: 139.83947,
-};
-
-const RERENDER_DELAY = 500;
-
-const markers = [];
 
 const map = L.map(mapContainer);
+const markerGroup = L.layerGroup().addTo(map);
 
 const mainPinIcon = L.icon({
-  iconUrl: '../img/main-pin.svg',
-  iconSize: [52, 52],
-  iconAnchor: [26, 52],
+  iconUrl: MapSettings.MAIN_PIN_ICON_URL,
+  iconSize: [MapSettings.MAIN_ICON_WIDTH, MapSettings.MAIN_ICON_HEIGHT],
+  iconAnchor: [MapSettings.MAIN_ICON_WIDTH / MapSettings.DIVIDER, MapSettings.MAIN_ICON_HEIGHT],
 });
 
 const mainPinMarker = L.marker(
   {
-    lat: TOKYO_COORDS.lat,
-    lng: TOKYO_COORDS.lng,
+    lat: MapSettings.TOKYO_LAT,
+    lng: MapSettings.TOKYO_LNG,
   },
   {
     draggable: true,
@@ -36,64 +44,77 @@ const mainPinMarker = L.marker(
 const mapReset = () => {
   map.closePopup();
   mainPinMarker.setLatLng({
-    lat: TOKYO_COORDS.lat,
-    lng: TOKYO_COORDS.lng,
+    lat: MapSettings.TOKYO_LAT,
+    lng: MapSettings.TOKYO_LNG,
   });
 
   map.setView({
-    lat: TOKYO_COORDS.lat,
-    lng: TOKYO_COORDS.lng,
-  }, 12);
+    lat: MapSettings.TOKYO_LAT,
+    lng: MapSettings.TOKYO_LNG,
+  }, MapSettings.ZOOM);
+};
+
+const createOffer = (offer) => {
+  const icon = L.icon({
+    iconUrl: MapSettings.OFFER_PIN_ICON_URL,
+    iconSize: [MapSettings.OFFER_ICON_WIDTH, MapSettings.OFFER_ICON_HEIGHT],
+    iconAnchor: [MapSettings.OFFER_ICON_WIDTH / MapSettings.DIVIDER, MapSettings.OFFER_ICON_HEIGHT],
+  });
+  const marker = L.marker(
+    {
+      lat: offer.location.lat,
+      lng: offer.location.lng,
+    },
+    {
+      icon,
+    },
+  );
+  marker.addTo(markerGroup).bindPopup(createPopup(offer));
 };
 
 const createOffers = (offers) => {
   offers
-    .slice()
     .filter(filterOffers)
-    .slice(0, 10)
+    .slice(0, MapSettings.MAX_OFFERS_COUNT)
     .forEach((offer) => {
-      const icon = L.icon({
-        iconUrl: '../img/pin.svg',
-        iconSize: [40, 40],
-        iconAnchor: [20, 40],
-      });
-      const marker = L.marker(
-        {
-          lat: offer.location.lat,
-          lng: offer.location.lng,
-        },
-        {
-          icon,
-        },
-      );
-      markers.push(marker);
-      marker.addTo(map).bindPopup(createPopup(offer));
+      createOffer(offer);
     });
 };
 
 const clearMarkers = () => {
-  markers.forEach((marker) => {
-    marker.remove();
-  });
+  markerGroup.clearLayers();
 };
 
 const rerenderMap = debounce(
   (offers) => {
     clearMarkers();
     createOffers(offers);
-  }, RERENDER_DELAY,
+  },
 );
 
-const mapInit = (offers) => {
+const mapInit = (cb) => {
   map
-    .on('load', () => {
-      addressInput.value = `${TOKYO_COORDS.lat}, ${TOKYO_COORDS.lng}`;
-      createOffers(offers);
+    .on('load', async () => {
+      try {
+        const offers = await getData();
+        enableForms();
+        addressInput.value = `${MapSettings.TOKYO_LAT}, ${MapSettings.TOKYO_LNG}`;
+        createOffers(offers);
+        cb(offers);
+        resetButton.addEventListener('click', (evt) => {
+          evt.preventDefault();
+          formReset();
+          mapReset();
+          rerenderMap(offers);
+        });
+      } catch (err) {
+        createFailPopup('Произошла ошибка при загрузке данных');
+      }
     })
     .setView({
-      lat: TOKYO_COORDS.lat,
-      lng: TOKYO_COORDS.lng,
-    }, 12);
+      lat: MapSettings.TOKYO_LAT,
+      lng: MapSettings.TOKYO_LNG,
+    }, MapSettings.ZOOM);
 
   L.tileLayer(
     'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -106,13 +127,6 @@ const mapInit = (offers) => {
 
   mainPinMarker.on('move', (evt) => {
     addressInput.value = `${evt.target.getLatLng().lat.toFixed(5)}, ${evt.target.getLatLng().lng.toFixed(5)}`;
-  });
-
-  resetButton.addEventListener('click', (evt) => {
-    evt.preventDefault();
-    formReset();
-    mapReset();
-    rerenderMap(offers);
   });
 };
 
